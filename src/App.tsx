@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Provider, connect } from 'react-redux'
 import { store } from './store'
 import Drawer from '@material-ui/core/Drawer'
 import { makeStyles } from '@material-ui/core/styles'
 import { SideBar, ContentPanel } from './components'
 import './App.css'
-import { AppBar, Toolbar, Typography, Icon } from '@material-ui/core'
+import { AppBar, Toolbar, Typography } from '@material-ui/core'
 import { RootState } from './store/reducers'
 
-import clashy_icon from './assets/icon-clashy.png'
 import { getIcon } from './utils'
 
 const drawerWidth = 122
