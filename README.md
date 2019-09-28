@@ -27,7 +27,7 @@ A GUI proxy client for Windows / macOS / Ubuntu Desktop based on [Clash](https:/
 Download latest release from [Release Page](https://github.com/SpongeNobody/Clashy/releases)
 
 ### If you meet binary singing issue on Apple & Windows operating system.
-Check ["Sign Issue"]("https://github.com/SpongeNobody/Clashy/blob/master/SignIssue.md") for more information.
+Check ["Sign Issue"](https://github.com/SpongeNobody/Clashy/blob/master/SignIssue.md) for more information.
 
 
 
