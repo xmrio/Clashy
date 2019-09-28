@@ -7,7 +7,6 @@ import { SettingsPanel } from '../settings-panel/SettingsPanel'
 
 import './ContentPanel.css'
 import { RootState } from '../../store/reducers'
-import { Paper, Theme } from '@material-ui/core'
 import { AboutPanel } from '../about-panel/AboutPanel'
 
 interface Props {

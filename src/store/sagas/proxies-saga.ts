@@ -1,6 +1,6 @@
-import { take, put, call, fork } from 'redux-saga/effects'
+import { take, put, call } from 'redux-saga/effects'
 import { ProxiesAction, gotProxies } from '../actions'
-import { requestClashProxies, requestSwitchProxy, requestDelay, batchRequestDelay } from '../../apis'
+import { requestClashProxies, requestSwitchProxy } from '../../apis'
 import { gotErrorProxies, fetchProxies, gotProxyDelay, TProxyDelay } from '../actions/proxies-action'
 import { callIPC } from '../../native-support/message-queue'
 import { BRG_MSG_SWITCHED_PROXY, BRG_MSG_CHECK_DELAY } from '../../native-support/message-constants'

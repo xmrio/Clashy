@@ -1,5 +1,5 @@
 import { take, put, call } from 'redux-saga/effects'
-import { TGeneralAction, gotConfigs, gotErrorGeneral, GeneralActions, toggleSaving, fetchClashyConfigs, gotClashy } from '../actions'
+import { TGeneralAction, gotConfigs, gotErrorGeneral, GeneralActions, toggleSaving, gotClashy } from '../actions'
 import { requestClashConfigs, requestSaveClashConfigs } from '../../apis'
 import { callIPC } from '../../native-support/message-queue'
 import { BRG_MSG_GET_CLASHY_CONFIG } from '../../native-support/message-constants'

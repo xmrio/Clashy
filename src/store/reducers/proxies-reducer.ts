@@ -1,5 +1,5 @@
-import { Record, Map, fromJS } from 'immutable'
-import { ProxiesAction, TProxiesAction, TProxyDelay } from '../actions'
+import { Record, Map } from 'immutable'
+import { ProxiesAction, TProxiesAction } from '../actions'
 import { Proxies, Selector } from '../../apis'
 
 const NON_SELECTOR_KEYS = ['ALL', 'GLOBAL', 'DIRECT', 'REJECT']
