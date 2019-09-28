@@ -29,7 +29,7 @@ export function *watchAddProfile() {
         const action: TProfilesAction = yield take(ProfilesAction.ADD_PROFILE)
         try {
             yield put(toggleLoading(true))
-            const result = yield call(callIPC, BRG_MSG_ADD_SUBSCRIBE, action.url)
+            yield call(callIPC, BRG_MSG_ADD_SUBSCRIBE, action.url)
             yield put({ type: ProfilesAction.FETCH_PROFILES })
         } catch (e) {
             yield put(toggleLoading(false))
