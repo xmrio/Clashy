@@ -19,7 +19,6 @@ import {
     Snackbar
 } from '@material-ui/core'
 
-import DoneIcon from '@material-ui/icons/Done'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import DeleteIcon from '@material-ui/icons/Delete'
 

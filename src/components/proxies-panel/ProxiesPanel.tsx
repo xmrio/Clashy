@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Card, ButtonBase, CardContent, CardActions, AppBar, Toolbar, Typography, CssBaseline, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Fab, Checkbox, Snackbar } from '@material-ui/core'
+import { Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Fab, Checkbox, Snackbar } from '@material-ui/core'
 
 import './ProxiesPanel.css'
 import { fetchProxies, switchProxy, checkProxiesDelay } from '../../store/actions'
@@ -8,7 +8,7 @@ import { Proxies } from '../../apis'
 import { RootState } from '../../store/reducers'
 import { TDispatch } from '../../utils'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { NetworkCheck, ArrowRightAlt, CheckBox, ArrowForward } from '@material-ui/icons'
+import { NetworkCheck, ArrowForward } from '@material-ui/icons'
 
 interface Props {
     proxies: Proxies
