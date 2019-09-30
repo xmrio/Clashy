@@ -20,7 +20,8 @@ function setAsSystemProxy(systemProxy) {
 }
 
 function _setSystemProxyForMac(systemProxy) {
-    const adapter = `"$(networksetup -listallnetworkservices | head -2 | tail -1)"`
+//     const adapter = `"$(networksetup -listallnetworkservices | head -2 | tail -1)"`
+    const adapter = `"Wi-Fi"`
     exec(`networksetup -setwebproxy ${adapter} 127.0.0.1 2340 && networksetup -setwebproxystate ${adapter} ${systemProxy ? "on" : "off"}`)
     exec(`networksetup -setsecurewebproxy ${adapter} 127.0.0.1 2340 && networksetup -setsecurewebproxystate ${adapter} ${systemProxy ? "on" : "off"}`)
     exec(`networksetup -setsocksfirewallproxy ${adapter} 127.0.0.1 2341 && networksetup -setsocksfirewallproxystate ${adapter} ${systemProxy ? "on" : "off"}`)
