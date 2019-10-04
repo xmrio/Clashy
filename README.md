@@ -82,8 +82,24 @@ Any pull request is welcome.
 
 Not exactly. I've been using ClashX for several months and I like it. It's easy to use and nicely designed. But I also need a decent Clash client on my Ubuntu Desktop. And the interface must be easy enough for anyone to use because I don't want to teach my wife how to edit proxy rules or how to use remote configuration files. So I decide to make my own Clash GUI client. I did NOT take any code or assets from those two projects but they did give me some ideas about interface design and implementation.
 
-### I don't like Electron.
-Me either.
-
 ### How can I check `Clash`'s logs in `Clashy` ?
 You can't for now. Visit `127.0.0.1:2390/logs` for Clash logs.
+
+### Is `timeout`ed proxy means the proxy is unavailable?
+
+Not really. `Clashy` use `Clash`'s `/delay` API for speed testing. This API requires a parameter which indicates speed test timeout. This parameter is 10 seconds in current build. So there are two kinds of timeout in `Clashy`:
+* Proxy timeout, which means proxy is unavailable.
+* `Clash` speed test timeout, which means `Clash` waited more than 10 seconds but still no response from target server (which is https://www.google.com). This proxy might be available with a huge delay. Or unavailable at all.
+
+Sadly, I can't distinct those two timeout types with current `Clash` API.
+
+
+### I don't like Electron.
+Me either. Checkout Electron memes below!
+
+<div width="100%">
+  <img src="https://i.imgur.com/e2zUaPq.png" width="300" />
+  <img src="https://i.imgur.com/Hxy2XXC.jpg" width="300" />
+  <img src="https://i.imgur.com/DuwkjfZ.png" width="300" />
+</div>
+
