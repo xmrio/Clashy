@@ -65,6 +65,7 @@ Check ["Sign Issue"](https://github.com/SpongeNobody/Clashy/blob/master/SignIssu
 
 - [x] Auto update
 - [x] ~~Post build script to zip binaries~~
+- [ ] Reset system proxy after exit app
 - [ ] Logout current clash client
 - [ ] Use external clash binary
 - [ ] Login interface for external clash binary
