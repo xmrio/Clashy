@@ -20,7 +20,8 @@ import {
 import { callIPC } from '../../native-support/message-queue'
 import {
     BRG_MSG_SET_LOGIN_ITEM,
-    BRG_MSG_SET_SYSTEM_PROXY
+    BRG_MSG_SET_SYSTEM_PROXY,
+    BRG_MSG_SET_MINIMIZED
 } from '../../native-support/message-constants'
 
 const initialState = {
@@ -66,6 +67,7 @@ const _SettingsPanel = ({ saving, configs, saveConfigs, clashy }: Props) => {
     const [allowLAN, setAllowLAN] = useState(configs == null ? false : configs['allow-lan'])
     const [systemProxy, setSystemProxy] = useState(clashy == null ? false : clashy.systemProxy || false)
     const [startWithSystem, setStartWithSystem] = useState(clashy == null ? false : clashy.startWithSystem || false)
+    const [launchMinimized,setLaunchMinimized] = useState(clashy == null ? false : clashy.launchMinimized || false)
 
     if (configs == null || clashy == null) {
         return (
@@ -89,6 +91,9 @@ const _SettingsPanel = ({ saving, configs, saveConfigs, clashy }: Props) => {
         }
         if (startWithSystem !== clashy.startWithSystem) {
             callIPC(BRG_MSG_SET_LOGIN_ITEM, startWithSystem)
+        }
+        if (launchMinimized !== clashy.launchMinimized) {
+            callIPC(BRG_MSG_SET_MINIMIZED, launchMinimized)
         }
     }
     return (
@@ -132,6 +137,12 @@ const _SettingsPanel = ({ saving, configs, saveConfigs, clashy }: Props) => {
                     <p>Set as system proxy</p>
                     <Switch checked={systemProxy} onClick={(e) => {
                         setSystemProxy(!systemProxy)
+                    }} />
+                </div>
+                <div className={'SettingsRow'}>
+                    <p>Launch Minimized</p>
+                    <Switch checked={launchMinimized} onClick={(e) => {
+                        setLaunchMinimized(!launchMinimized)
                     }} />
                 </div>
                 <div className='SettingsRow'>

@@ -33,7 +33,8 @@ function getInitialConfig() {
         systemProxy: false,
         socksPort: 2341,
         httpPort: 2340,
-        startWithSystem: false
+        startWithSystem: false,
+        launchMinimized: true
     }
 }
 
@@ -108,6 +109,13 @@ function setSocksPort(socksPort) {
     })
 }
 
+function setLaunchMinimized(launchMinimized) {
+    saveConfig({
+        ...getCurrentConfig(),
+        launchMinimized
+    })
+}
+
 async function createSubscriptionFileIfNeeded() {
     const subscriptions = path.join(getDataPath(), 'clashy-configs', 'subscriptions.json')
     const exist = await fileExists(subscriptions)
@@ -173,5 +181,6 @@ module.exports = {
     initialConfigsIfNeeded,
     createSubscriptionFileIfNeeded,
     saveStartWithSystem,
-    setSystemProxy
+    setSystemProxy,
+    setLaunchMinimized
 }

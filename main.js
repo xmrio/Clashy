@@ -13,7 +13,8 @@ const {
     BRG_MSG_SET_LOGIN_ITEM,
     BRG_MSG_GET_CLASHY_CONFIG,
     BRG_MSG_SET_SYSTEM_PROXY,
-    BRG_MSG_CHECK_DELAY
+    BRG_MSG_CHECK_DELAY,
+    BRG_MSG_SET_MINIMIZED
 } = require('./src/native-support/message-constants')
 const { ClashBinary, utils } = require('./src/native-support')
 const { openConfigFolder, openLink, getStartWithSystem, setStartWithSystem, setAsSystemProxy } = require('./src/native-support/os-helper')
@@ -21,7 +22,7 @@ const { initializeTray, destroyTrayIcon, setWindowInstance } = require('./src/na
 const path = require('path')
 const { addSubscription, deleteSubscription, updateSubscription } = require('./src/native-support/subscription-updater')
 const { fetchProfiles } = require('./src/native-support/profiles-manager')
-const { setProfile, setProxy, getCurrentConfig, initialConfigsIfNeeded } = require('./src/native-support/configs-manager')
+const { setProfile, setProxy, getCurrentConfig, initialConfigsIfNeeded, setLaunchMinimized } = require('./src/native-support/configs-manager')
 const { batchRequestDelay } = require('./src/native-support/check-delay')
 const { autoUpdater } = require('electron-updater')
 // 保持对window对象的全局引用，如果不这么做的话，当JavaScript对象被
@@ -95,9 +96,17 @@ if (!singleInstanceLock) {
     app.on('ready', () => {
         autoUpdater.checkForUpdatesAndNotify();
         initialConfigsIfNeeded().then(() => {
-            createWindow()
+            const config = getCurrentConfig() || {}
+            if (!config.launchMinimized) {
+                createWindow()
+            } else {
+                if (app.dock != null) {
+                    app.dock.hide()
+                }
+            }
             setMainMenu()
             initializeTray(win, createWindow)
+            setAsSystemProxy(config.systemProxy, false)
         }).catch(e => {
             console.error(e)
         })
@@ -123,6 +132,7 @@ app.on('activate', () => {
 })
 
 app.on('will-quit', () => {
+    setAsSystemProxy(false, false)
     destroyTrayIcon()
     ClashBinary.killClash()
 })
@@ -199,6 +209,10 @@ function dispatchIPCCalls(event) {
             break
         case BRG_MSG_SET_SYSTEM_PROXY:
             setAsSystemProxy(event.arg)
+            resolveIPCCall(event, event.__callbackId, null)
+            break
+        case BRG_MSG_SET_MINIMIZED:
+            setLaunchMinimized(event.arg)
             resolveIPCCall(event, event.__callbackId, null)
             break
         case BRG_MSG_CHECK_DELAY:
