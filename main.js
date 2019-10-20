@@ -60,7 +60,6 @@ function createWindow() {
         }
         win.hide()
     })
-    ClashBinary.spawnClash()
     // 然后加载应用的 index.html。
 
     if (utils.isElectronDebug()) {
@@ -104,6 +103,7 @@ if (!singleInstanceLock) {
                     app.dock.hide()
                 }
             }
+            ClashBinary.spawnClash()
             setMainMenu()
             initializeTray(win, createWindow)
             setAsSystemProxy(config.systemProxy, false)
