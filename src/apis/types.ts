@@ -25,6 +25,7 @@ export interface ClashConfig {
 export interface ClashyConfig {
     startWithSystem?: boolean
     systemProxy?: boolean
+    launchMinimized?: boolean
 }
 
 export interface ClashyProfile {
