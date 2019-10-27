@@ -30,7 +30,10 @@ const { autoUpdater } = require('electron-updater')
 let win
 
 function createWindow() {
-    // 创建浏览器窗口。
+    if (process.platform === 'linux') {
+        Menu.setApplicationMenu(null)
+    }
+
     win = new BrowserWindow({
         width: 800,
         height: 600,
@@ -110,7 +113,7 @@ if (!singleInstanceLock) {
         }).catch(e => {
             console.error(e)
         })
-})
+    })
 }
 
 // 当全部窗口关闭时退出。
