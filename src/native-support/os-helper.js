@@ -5,8 +5,10 @@ const path = require('path')
 const { isElectronDebug } = require('./utils')
 const { saveStartWithSystem, setSystemProxy, getCurrentConfig } = require('./configs-manager')
 
-function setAsSystemProxy(systemProxy) {
-    setSystemProxy(systemProxy)
+function setAsSystemProxy(systemProxy, save=true) {
+    if (save) {
+        setSystemProxy(systemProxy)
+    }
     switch (process.platform) {
         case 'win32':
             _setSystemProxyForWindows(systemProxy)
