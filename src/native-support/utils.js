@@ -1,8 +1,8 @@
 const fs = require('fs')
-const https = require('https')
 const http = require('http')
 const promisify = require('util').promisify
 const { app } = require('electron')
+const request = require('request')
 
 const openFile = promisify(fs.open)
 const writeFile = promisify(fs.write)
@@ -34,12 +34,20 @@ function isLinux() {
 
 function httpsGet(url) {
     return new Promise((resolve, reject) => {
-        https.get(url, function (res) {
-            let data = ''
-            res.on('error', e => reject(e))
-            res.on('data', chunk => { data += chunk })
-            res.on('end', () => resolve(data))
-        }).on('error', err => reject(err))
+        const options = {
+            url,
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            },
+            followAllRedirects: true
+        }
+        request.get(options, (error, resp, body) => {
+            if (body) {
+                resolve(body)
+            } else {
+                reject(error)
+            }
+        })
     })
 }
 
