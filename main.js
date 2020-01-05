@@ -89,9 +89,9 @@ if (!singleInstanceLock) {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (win != null && win.isDestroyed()) {
             win.show()
-            if (app.dock != null) {
-                app.dock.show()
-            }
+        }
+        if (app != null && app.dock != null) {
+            app.dock.show()
         }
       })
     

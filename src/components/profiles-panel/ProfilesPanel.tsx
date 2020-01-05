@@ -121,7 +121,7 @@ const ProfileCard = ({ profile, onSwitchClicked, onDeleteClicked, onUpdateClicke
 
     return (
         <Card className='ProfileCard'>
-            <CardContent style={{ flex: 1 }}>
+            <CardContent style={{ flex: 1, maxHeight: '150px', overflowX: 'hidden', overflowY: 'auto' }}>
                 <p>{profile.name}</p>
             </CardContent>
             <CardActions className='ProfileCardActions'>
