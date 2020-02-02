@@ -3,7 +3,7 @@ import { TDispatch } from '../../utils'
 import { connect } from 'react-redux'
 import { ClashyProfile } from '../../apis'
 import { RootState } from '../../store/reducers'
-import { fetchProfiles, addProfile, switchProfile, deleteProfile, updateProfile, profilesClearError } from '../../store/actions/profiles-actions'
+import { fetchProfiles, addProfile, switchProfile, deleteProfile, updateProfile, profilesClearError, profilesGotError } from '../../store/actions/profiles-actions'
 
 import './ProfilesPanel.css'
 import {
@@ -27,6 +27,7 @@ interface Props {
     currentProfile: string
     loading: boolean
     error?: any
+    setError: (error?: string) => void
     fetchProfiles: () => void
     addProfile: (url: string) => void
     clearError: () => void
@@ -40,6 +41,7 @@ const _ProfilePanel = ({
     currentProfile,
     loading,
     error,
+    setError,
     fetchProfiles,
     addProfile,
     switchProfile,
@@ -68,6 +70,8 @@ const _ProfilePanel = ({
                                 onUpdateClicked={updateProfile}
                                 onDeleteClicked={deleteProfile}
                                 checked={currentProfile === each.url}
+                                error={error}
+                                setError={setError}
                                 />
                     })
                 }
@@ -96,12 +100,13 @@ interface ProfileCardProps {
     key: any
     profile: ClashyProfile
     checked: boolean
+    error: string
+    setError: (error?: string) => void
     onSwitchClicked: (url: string) => void
     onDeleteClicked: (url: string) => void
     onUpdateClicked: (url: string) => void
 }
-const ProfileCard = ({ profile, onSwitchClicked, onDeleteClicked, onUpdateClicked, checked }: ProfileCardProps) => {
-    const [showError, setShowError] = useState(false)
+const ProfileCard = ({ profile, onSwitchClicked, onDeleteClicked, onUpdateClicked, checked, error, setError }: ProfileCardProps) => {
     const onSwitchClickedWrapped = () => {
         if (checked) {
             return
@@ -110,7 +115,7 @@ const ProfileCard = ({ profile, onSwitchClicked, onDeleteClicked, onUpdateClicke
     }
     const onDeleteClickedWrapped = () => {
         if (profile.name === 'config.yaml') {
-            setShowError(true)
+            setError('Can not delete default configuration file.')
             return
         }
         onDeleteClicked(profile.url)
@@ -138,10 +143,10 @@ const ProfileCard = ({ profile, onSwitchClicked, onDeleteClicked, onUpdateClicke
                 />
             </CardActions>
             <Snackbar
-                open={showError}
+                open={error != null && error.length > 0}
                 autoHideDuration={2000}
-                onClose={() => setShowError(false)}
-                message='Can not delete default configuration file.'
+                onClose={() => setError()}
+                message={error}
             />
         </Card>
     )
@@ -163,7 +168,8 @@ const mapDispatchToProps = (dispatch: TDispatch) => {
         switchProfile: (url: string) => dispatch(switchProfile(url)),
         deleteProfile: (url: string) => dispatch(deleteProfile(url)),
         updateProfile: (url: string) => dispatch(updateProfile(url)),
-        clearError: () => dispatch(profilesClearError())
+        clearError: () => dispatch(profilesClearError()),
+        setError: (error?: string) => dispatch(profilesGotError(error))
     }
 }
 
