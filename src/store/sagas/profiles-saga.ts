@@ -61,10 +61,13 @@ export function *watchSwitchProfile() {
             if (result == null) {
                 yield call(callIPC, BRG_MSG_SWITCHED_PROFILE, action.profile)
                 yield put({ type: ProfilesAction.FETCH_PROFILES })
+            } else {
+                throw result
             }
         } catch (e) {
             yield put(toggleLoading(false))
-            yield put(profilesGotError(e))
+            const msg = e.message || 'Network Error.'
+            yield put(profilesGotError(msg))
         }
     }
 }
