@@ -158,6 +158,9 @@
       ],
       "icon": "build-resources/icon.ico"
     },
+    "linux": {
+      "target": ["AppImage", "deb", "pacman"]
+    },
     "nsis": {
       "runAfterFinish": true,
       "installerIcon": "build-resources/icon.ico",
