@@ -4,6 +4,7 @@ const { app, clipboard } = require('electron')
 const path = require('path')
 const { isElectronDebug } = require('./utils')
 const { saveStartWithSystem, setSystemProxy, getCurrentConfig } = require('./configs-manager')
+const AutoLaunch = require('auto-launch')
 
 function setAsSystemProxy(systemProxy, save=true) {
     if (save) {
@@ -32,7 +33,7 @@ function _setSystemProxyForMac(systemProxy) {
 function _setSystemProxyForWindows(systemProxy) {
     let cmd = ''
     const executable = path.resolve(path.join(!isElectronDebug() ? process.resourcesPath : '.', 'vendor', 'sysproxy', 'sysproxy.exe'))
-    if (systemProxy) {    
+    if (systemProxy) {
         const port = getCurrentConfig().httpPort || '2340'
         cmd = `${executable} global 127.0.0.1:${port}`
     } else {
@@ -103,10 +104,21 @@ function setStartWithSystem(start) {
     //     return
     // }
     saveStartWithSystem(start)
-    app.setLoginItemSettings({
-        openAtLogin: start,
-        openAsHidden: true
-    })
+    if (process.platform == 'linux') {
+        var launch = new AutoLaunch({
+            name: "Clashy"
+        })
+        if (start) {
+            launch.enable()
+        } else {
+            launch.disable()
+        }
+    } else {
+        appdsetLoginItemSettings({
+            openAtLogin: start,
+            openAsHidden: true
+        })
+    }
 }
 
 function getStartWithSystem() {
