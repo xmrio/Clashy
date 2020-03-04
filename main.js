@@ -45,13 +45,6 @@ function createWindow() {
     win.setFullScreenable(false)
     win.setResizable(false)
     win.removeMenu()
-    win.on('minimize', event => {
-        event.preventDefault();
-        if (app.dock != null) {
-            app.dock.hide()
-        }
-        win.hide()
-    })
     win.on('restore', event => {
         if (app.dock != null) {
             app.dock.show()
