@@ -129,7 +129,7 @@ function copyExportCommand() {
     const { httpPort, socksPort } = getCurrentConfig()
     const url = 'http://127.0.0.1'
     clipboard.writeText(
-        `export https_proxy=${url}:${httpPort};export http_proxy=${url}:${httpPort};export all_proxy=socks5h://127.0.0.1:${socksPort}`
+        `export https_proxy=${url}:${httpPort};export http_proxy=${url}:${httpPort};export all_proxy=socks5://127.0.0.1:${socksPort}`
         )
 }
 
