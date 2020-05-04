@@ -107,7 +107,7 @@ async function updateSubscription(fileName) {
     if (url.startsWith('https://')) {
         resp = await httpsGet(url)
     } else {
-        resp = await  fetchHttp(url)
+        resp = await fetchHttp(url)
     }
     // Purge current config content
     const fd = await openFile(fileName, 'w+')
