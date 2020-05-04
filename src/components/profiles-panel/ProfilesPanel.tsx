@@ -16,7 +16,8 @@ import {
     CardActions,
     IconButton,
     Checkbox,
-    Snackbar
+    Snackbar,
+    CircularProgress
 } from '@material-ui/core'
 
 import RefreshIcon from '@material-ui/icons/Refresh'
@@ -86,6 +87,12 @@ const _ProfilePanel = ({
                     className='button'
                     onClick={onSaveClicked}
                     >Save</Button>
+                {
+                    loading ? <div className='loading'>
+                        <CircularProgress />
+                        <p>Loading</p>
+                    </div> : null
+                }
             </Paper>
             <Snackbar
                 open={error != null}
