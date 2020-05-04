@@ -216,10 +216,7 @@ function dispatchIPCCalls(event) {
             const resolve = curry(resolveIPCCall)(event)(event.__callbackId)
             const reject = curry(rejectIPCCall)(event)(event.__callbackId)
             if (call) {
-                call({
-                    httpPort: event.httpPort,
-                    socksPort: event.socksPort
-                }).then(resolve).catch(reject)
+                call(event).then(resolve).catch(reject)
             }
             break
         }
