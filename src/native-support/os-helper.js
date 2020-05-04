@@ -2,7 +2,7 @@ const { exec } = require('child_process')
 const { getDataPath } = require('./utils')
 const { app, clipboard } = require('electron')
 const path = require('path')
-const { isElectronDebug } = require('./utils')
+const { isElectronDebug, fetchHttp } = require('./utils')
 const { saveStartWithSystem, setSystemProxy, getCurrentConfig } = require('./configs-manager')
 const AutoLaunch = require('auto-launch')
 
@@ -104,7 +104,7 @@ function setStartWithSystem(start) {
     //     return
     // }
     saveStartWithSystem(start)
-    if (process.platform == 'linux') {
+    if (process.platform === 'linux') {
         var launch = new AutoLaunch({
             name: "Clashy"
         })
@@ -114,7 +114,7 @@ function setStartWithSystem(start) {
             launch.disable()
         }
     } else {
-        appdsetLoginItemSettings({
+        app.setLoginItemSettings({
             openAtLogin: start,
             openAsHidden: true
         })
@@ -133,11 +133,21 @@ function copyExportCommand() {
         )
 }
 
+function restorePortSettings() {
+    const { httpPort, socksPort, controllerPort } = getCurrentConfig()
+    const url = `http://127.0.0.1:${controllerPort}/configs`
+    fetchHttp(url, 'PATCH', {
+        port: httpPort,
+        'socks-port': socksPort
+    })
+}
+
 module.exports = {
     setAsSystemProxy,
     openConfigFolder,
     openLink,
     setStartWithSystem,
     getStartWithSystem,
-    copyExportCommand
+    copyExportCommand,
+    restorePortSettings
 }
