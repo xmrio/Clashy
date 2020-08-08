@@ -25,7 +25,7 @@ import {
 } from '../../native-support/message-constants'
 
 const initialState = {
-    mode: 'GLOBAL',
+    mode: 'global',
     socksPort: 0,
     httpPort: 0,
     controllerPort: 0,
@@ -52,7 +52,7 @@ const _SettingsPanel = ({ saving, configs, saveConfigs, clashy }: Props) => {
         }
         setSocksPort(port)
     }
-    const [mode, setMode] = useState(configs == null ? 'GLOBAL' : configs['mode'])
+    const [mode, setMode] = useState(configs == null ? 'global' : configs['mode'].toLowerCase())
     const [httpPort, setHttpPort] = useState(configs == null ? 0 : configs['port'])
     const validateHttpPort = (str: string) => {
         if (str.length === 0) {
@@ -108,9 +108,9 @@ const _SettingsPanel = ({ saving, configs, saveConfigs, clashy }: Props) => {
                         onChange={(e, value) => setMode(value)}
                         value={mode}
                     >
-                        <FormControlLabel value='Global' control={<Radio />} label='GLOBAL' />
-                        <FormControlLabel value='Rule' control={<Radio />} label='RULE' />
-                        <FormControlLabel value='Direct' control={<Radio />} label='DIRECT' />
+                        <FormControlLabel value='global' control={<Radio />} label='GLOBAL' />
+                        <FormControlLabel value='rule' control={<Radio />} label='RULE' />
+                        <FormControlLabel value='direct' control={<Radio />} label='DIRECT' />
                     </RadioGroup>
                 </FormControl>
                 <div className={'SettingsRow'}>
