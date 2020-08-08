@@ -61,7 +61,7 @@ dns:
 # (1) 如果您为了确保 DNS 解析结果无污染，请仅保留列表内以 tls:// 开头的 DNS 服务器，但是通常对于国内没有太大必要。
 # (2) 如果您不在乎可能解析到污染的结果，更加追求速度。请将 nameserver 列表的服务器插入至 fallback 列表内，并移除重复项。
 
-Proxy:
+proxies:
 
 # shadowsocks
 # 所支持的加密方式与 go-shadowsocks2 保持一致
@@ -124,7 +124,7 @@ Proxy:
 # #   tls (https)  (skip-cert-verify)
 # - { name: "http", type: http, server: server, port: 443, tls: true, skip-cert-verify: true }
 
-Proxy Group:
+proxy-groups:
 # url-test 可以自动选择与指定 URL 测速后，延迟最短的服务器
 - { name: "auto", type: url-test, proxies: ["ss1"], url: "https://www.bing.com", interval: 300 }
 
@@ -138,7 +138,7 @@ Proxy Group:
 # 您也可以使用 RESTful API 去切换服务器，这种方式推荐在 GUI 中使用
 - { name: "Proxy", type: select, proxies: ["ss1", "auto"] }
 
-Rule:
+rules:
 # Apple
 - DOMAIN,hls.itunes.apple.com,Proxy
 - DOMAIN,itunes.apple.com,Proxy
