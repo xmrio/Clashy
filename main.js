@@ -40,6 +40,7 @@ function createWindow() {
     win = new BrowserWindow({
         width: 800,
         height: 600,
+        titleBarStyle: 'hiddenInset',
         webPreferences: {
             preload: path.join(__dirname, 'src', 'native-support', 'electron-preload.js'),
             webSecurity: false
