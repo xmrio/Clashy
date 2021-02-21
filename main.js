@@ -20,6 +20,7 @@ const { IPCCalls } = require('./src/native-support/ipc-calls')
 const { ClashBinary, utils } = require('./src/native-support')
 const { openConfigFolder, openLink, getStartWithSystem, setStartWithSystem, setAsSystemProxy, restorePortSettings } = require('./src/native-support/os-helper')
 const { initializeTray, destroyTrayIcon, setWindowInstance } = require('./src/native-support/tray-helper')
+const { injectContextMenu } = require('./src/native-support/context-menu')
 const path = require('path')
 const { addSubscription, deleteSubscription, updateSubscription } = require('./src/native-support/subscription-updater')
 const { fetchProfiles } = require('./src/native-support/profiles-manager')
@@ -66,6 +67,8 @@ function createWindow() {
     } else {
         win.loadFile('index.html')
     }
+
+    injectContextMenu(win)
 
     win.on('closed', () => {
         win = null
