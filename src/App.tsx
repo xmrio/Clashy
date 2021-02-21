@@ -9,6 +9,7 @@ import { AppBar, Toolbar, Typography } from '@material-ui/core'
 import { RootState } from './store/reducers'
 
 import { getIcon } from './utils'
+import { TitleBar } from './components/title-bar/intex'
 
 const drawerWidth = 122
 
@@ -44,29 +45,32 @@ interface Props {
 function _ClashyApp({ currentTab }: Props) {
     const classes = useStyles()
     return (
-    <div className={classes.root}>
-        <AppBar position='fixed' className={classes.appBar}>
-            <Toolbar>
-                {getIcon(currentTab)}
-                <Typography variant='h6'>
-                    {currentTab}
-                </Typography>
-            </Toolbar>
-        </AppBar>
-        <Drawer
-            className={classes.drawer}
-            variant={'persistent'}
-            anchor={'left'}
-            open={true}
-            classes={{
-                paper: classes.drawerPaper
-            }}
-        >
-            <SideBar />
-        </Drawer>
-        <main className={classes.content}>
-            <ContentPanel />
-        </main>
+        <div>
+            <TitleBar title='Clashy' />
+            <div className={classes.root}>
+                <AppBar position='fixed' className={classes.appBar}>
+                    <Toolbar>
+                        {getIcon(currentTab)}
+                        <Typography variant='h6'>
+                            {currentTab}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Drawer
+                    className={classes.drawer}
+                    variant={'persistent'}
+                    anchor={'left'}
+                    open={true}
+                    classes={{
+                        paper: classes.drawerPaper
+                    }}
+                >
+                    <SideBar />
+                </Drawer>
+                <main className={classes.content}>
+                    <ContentPanel />
+                </main>
+            </div>
     </div>
     )
 }
