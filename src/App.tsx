@@ -9,7 +9,9 @@ import { AppBar, Toolbar, Typography } from '@material-ui/core'
 import { RootState } from './store/reducers'
 
 import { getIcon } from './utils'
-import { TitleBar } from './components/title-bar/intex'
+import { TitleBar, WindowControls } from './components/title-bar'
+
+import './styles/grabber.css'
 
 const drawerWidth = 122
 
@@ -50,10 +52,13 @@ function _ClashyApp({ currentTab }: Props) {
                 <AppBar position='fixed' className={classes.appBar}>
                     <TitleBar />
                     <Toolbar>
-                        {getIcon(currentTab)}
-                        <Typography variant='h6'>
-                            {currentTab}
-                        </Typography>
+                        <div className='grabber' style={{ height: '64px', minHeight: '64px' }}>
+                            {getIcon(currentTab)}
+                            <Typography variant='h6'>
+                                {currentTab}
+                            </Typography>
+                        </div>
+                        <WindowControls />
                     </Toolbar>
                 </AppBar>
                 <Drawer
