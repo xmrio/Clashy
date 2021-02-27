@@ -46,9 +46,9 @@ function _ClashyApp({ currentTab }: Props) {
     const classes = useStyles()
     return (
         <div>
-            <TitleBar title='Clashy' />
             <div className={classes.root}>
                 <AppBar position='fixed' className={classes.appBar}>
+                    <TitleBar />
                     <Toolbar>
                         {getIcon(currentTab)}
                         <Typography variant='h6'>
