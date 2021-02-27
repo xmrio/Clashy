@@ -1,6 +1,6 @@
 {
   "name": "Clashy",
-  "version": "0.1.22",
+  "version": "0.2.00",
   "author": {
     "name": "nobody",
     "email": "nobody@nowhere.com"
@@ -48,6 +48,7 @@
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "electron-context-menu": "^2.4.0",
+    "electron-log": "^4.3.2",
     "electron-updater": "^4.1.2",
     "eslint": "^5.16.0",
     "eslint-config-react-app": "^4.0.1",
