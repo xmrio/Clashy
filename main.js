@@ -269,11 +269,20 @@ function setMainMenu() {
             ]
         },
         {
+            label: 'Window',
+            submenu: [
+                { role: 'close' }
+            ]
+        },
+        {
             label: 'Edit',
             submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
                 { role: 'copy' },
                 { role: 'cut' },
                 { role: 'paste' },
+                { role: 'selectAll' }
             ]
         }
     ];
