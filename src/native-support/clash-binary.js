@@ -67,6 +67,7 @@ function _spawnClash(configName) {
             _killClash()
             _spawnClash()
             log.error(`Clash process exit with signal: ${err ? err.signal : 'null'}. \n
+Code: ${err ? err.code : 'null'}; \n
 Stack: ${err ? err.stack : 'null'}. \n
 --------------------------------------`)
         }

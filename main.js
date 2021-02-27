@@ -26,6 +26,7 @@ const { addSubscription, deleteSubscription, updateSubscription } = require('./s
 const { fetchProfiles } = require('./src/native-support/profiles-manager')
 const { setProfile, setProxy, getCurrentConfig, initialConfigsIfNeeded, setLaunchMinimized } = require('./src/native-support/configs-manager')
 const { batchRequestDelay } = require('./src/native-support/check-delay')
+const { isWindows } = require('./src/native-support/utils')
 const { autoUpdater } = require('electron-updater')
 const { curry } = require('./src/utils/curry')
 
@@ -40,7 +41,8 @@ function createWindow() {
     win = new BrowserWindow({
         width: 800,
         height: 600,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: isWindows() ? 'default' : 'hiddenInset',
+        frame: !isWindows(),
         webPreferences: {
             preload: path.join(__dirname, 'src', 'native-support', 'electron-preload.js'),
             webSecurity: false
