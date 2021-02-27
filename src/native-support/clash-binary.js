@@ -87,6 +87,7 @@ function _killClash() {
         } else {
             clashProcess.kill('SIGINT')
         }
+        clashProcess = null
     }
 }
 
