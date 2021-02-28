@@ -162,10 +162,9 @@
       "icon": "build-resources/icon.ico"
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "category": "Network",
+      "icon": "build-resources/1024x1024.png",
+      "target": ["AppImage", "deb"]
     },
     "nsis": {
       "runAfterFinish": true,
