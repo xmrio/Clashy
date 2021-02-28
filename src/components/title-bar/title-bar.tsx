@@ -12,7 +12,7 @@ type Props = {
 }
 
 function titleBar(props: Props) {
-    if (isWindows() || isLinux()) {
+    if (!isMac()) {
         return null
     }
     return (
