@@ -46,7 +46,8 @@ function createWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'src', 'native-support', 'electron-preload.js'),
             webSecurity: false
-        }
+        },
+        icon: path.join(__dirname, 'src', 'assets', 'icon.png')
     })
     win.setFullScreenable(false)
     win.setResizable(false)
