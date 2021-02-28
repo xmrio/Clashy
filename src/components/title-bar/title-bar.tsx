@@ -1,5 +1,5 @@
 import React from 'react'
-import { isWindows } from '../../utils'
+import { isWindows, isLinux } from '../../utils'
 import ic_minimum from '../../assets/minimum.png'
 import ic_close from '../../assets/close.png'
 
@@ -12,7 +12,7 @@ type Props = {
 }
 
 function titleBar(props: Props) {
-    if (isWindows()) {
+    if (isWindows() || isLinux()) {
         return null
     }
     return (
