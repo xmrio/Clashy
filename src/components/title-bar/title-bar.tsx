@@ -1,5 +1,5 @@
 import React from 'react'
-import { isWindows, isLinux } from '../../utils'
+import { isWindows, isLinux, isMac } from '../../utils'
 import ic_minimum from '../../assets/minimum.png'
 import ic_close from '../../assets/close.png'
 
@@ -22,12 +22,14 @@ function titleBar(props: Props) {
                     props.title ? <p>{props.title}</p> : null
                 }
             </div>
-            <WindowControls />
         </div>
     )
 }
 
 function controls() {
+    if (isMac()) {
+        return null
+    }
     return (
         <div className='title-bar-controls'>
             <div className='button hover-trans' onClick={minimumWindow}>
