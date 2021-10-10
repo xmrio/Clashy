@@ -55,7 +55,7 @@ function filterSelectors(proxies?: Proxies) {
     }
     const keys = Object.keys(proxies)
     const validKeys = keys.filter(each => {
-        return proxies[each].type === 'Selector' && NON_SELECTOR_KEYS.indexOf(each) < 0
+        return proxies[each].type === 'Selector' && NON_SELECTOR_KEYS.indexOf(each.toUpperCase()) < 0
     })
     let selector = ''
     const ret: {[key: string]: Selector} = {}

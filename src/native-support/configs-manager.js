@@ -6,7 +6,8 @@ const {
     fileExists,
     mkDir,
     copyFile,
-    isElectronDebug
+    isElectronDebug,
+    deleteFile
 } = require('./utils')
 
 async function initialConfigsIfNeeded() {
@@ -34,7 +35,8 @@ function getInitialConfig() {
         socksPort: 2341,
         httpPort: 2340,
         startWithSystem: false,
-        launchMinimized: true
+        launchMinimized: true,
+        clashVersion: null
     }
 }
 
@@ -168,6 +170,24 @@ async function _createClashConfigsIfNeeded() {
         if (isElectronDebug()) {
             console.log('Clash configs & mmdb created.')
         }
+        saveConfig({
+            ...getCurrentConfig(),
+            clashVersion: '1.0.0'
+        })
+        return
+    }
+    // Recreate clash config file for clash version >= 1.0
+    const clashV1p0 = getCurrentConfig().clashVersion
+    if (!clashV1p0) {
+        try {
+            await deleteFile(path.resolve(getDataPath(), 'clash-configs', 'config.yaml'))
+        } catch(e) {}
+        const defaultConfig = path.resolve(getAppPath(), 'clash-configs', 'config.yaml')
+        await copyFile(defaultConfig, path.resolve(clashConfigs, 'config.yaml'))
+        saveConfig({
+            ...getCurrentConfig(),
+            clashVersion: '1.0.0'
+        })
     }
 }
 

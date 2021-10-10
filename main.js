@@ -16,17 +16,21 @@ const {
     BRG_MSG_CHECK_DELAY,
     BRG_MSG_SET_MINIMIZED
 } = require('./src/native-support/message-constants')
+const { IPCCalls } = require('./src/native-support/ipc-calls')
 const { ClashBinary, utils } = require('./src/native-support')
-const { openConfigFolder, openLink, getStartWithSystem, setStartWithSystem, setAsSystemProxy } = require('./src/native-support/os-helper')
+const { openConfigFolder, openLink, getStartWithSystem, setStartWithSystem, setAsSystemProxy, restorePortSettings } = require('./src/native-support/os-helper')
 const { initializeTray, destroyTrayIcon, setWindowInstance } = require('./src/native-support/tray-helper')
+const { injectContextMenu } = require('./src/native-support/context-menu')
 const path = require('path')
 const { addSubscription, deleteSubscription, updateSubscription } = require('./src/native-support/subscription-updater')
 const { fetchProfiles } = require('./src/native-support/profiles-manager')
 const { setProfile, setProxy, getCurrentConfig, initialConfigsIfNeeded, setLaunchMinimized } = require('./src/native-support/configs-manager')
 const { batchRequestDelay } = require('./src/native-support/check-delay')
+const { isWindows, isLinux } = require('./src/native-support/utils')
 const { autoUpdater } = require('electron-updater')
-// 保持对window对象的全局引用，如果不这么做的话，当JavaScript对象被
-// 垃圾回收的时候，window对象将会自动的关闭
+const { curry } = require('./src/utils/curry')
+
+// Global reference for window object to prevent it from being GCed.
 let win
 
 function createWindow() {
@@ -37,10 +41,13 @@ function createWindow() {
     win = new BrowserWindow({
         width: 800,
         height: 600,
+        titleBarStyle: isWindows() ? 'default' : 'hiddenInset',
+        frame: !(isWindows() || isLinux()),
         webPreferences: {
             preload: path.join(__dirname, 'src', 'native-support', 'electron-preload.js'),
             webSecurity: false
-        }
+        },
+        icon: path.join(__dirname, 'src', 'assets', 'icon.png')
     })
     win.setFullScreenable(false)
     win.setResizable(false)
@@ -65,11 +72,9 @@ function createWindow() {
         win.loadFile('index.html')
     }
 
-    // 当 window 被关闭，这个事件会被触发。
+    injectContextMenu(win)
+
     win.on('closed', () => {
-        // 取消引用 window 对象，如果你的应用支持多窗口的话，
-        // 通常会把多个 window 对象存放在一个数组里面，
-        // 与此同时，你应该删除相应的元素。
         win = null
     })
     return win
@@ -103,24 +108,17 @@ if (!singleInstanceLock) {
             setMainMenu()
             initializeTray(win, createWindow)
             setAsSystemProxy(config.systemProxy, false)
+            setTimeout(restorePortSettings, 2000)
         }).catch(e => {
             console.error(e)
         })
     })
 }
 
-// 当全部窗口关闭时退出。
 app.on('window-all-closed', () => {
-    // 在 macOS 上，除非用户用 Cmd + Q 确定地退出，
-    // 否则绝大部分应用及其菜单栏会保持激活。
-    // if (process.platform !== 'darwin') {
-    //     app.quit()
-    // }
 })
 
 app.on('activate', () => {
-    // 在macOS上，当单击dock图标并且没有其他窗口打开时，
-    // 通常在应用程序中重新创建一个窗口。
     if (win === null) {
         createWindow()
         setWindowInstance(win)
@@ -220,8 +218,15 @@ function dispatchIPCCalls(event) {
                     rejectIPCCall(event, event.__callbackId, e)
                 })
             break
-        default:
+        default: {
+            const call = IPCCalls[event.__name]
+            const resolve = curry(resolveIPCCall)(event)(event.__callbackId)
+            const reject = curry(rejectIPCCall)(event)(event.__callbackId)
+            if (call) {
+                call(event).then(resolve).catch(reject)
+            }
             break
+        }
     }
 }
 
@@ -267,11 +272,20 @@ function setMainMenu() {
             ]
         },
         {
+            label: 'Window',
+            submenu: [
+                { role: 'close' }
+            ]
+        },
+        {
             label: 'Edit',
             submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
                 { role: 'copy' },
                 { role: 'cut' },
                 { role: 'paste' },
+                { role: 'selectAll' }
             ]
         }
     ];
