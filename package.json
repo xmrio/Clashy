@@ -18,7 +18,8 @@
     "pack": "npm run build:all && electron-builder --dir",
     "dist": "npm run build:all && electron-builder",
     "publish": "electron-builder -p",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "ci": "npm run dist && electron-builder -p always"
   },
   "main": "main.js",
   "homepage": ".",
