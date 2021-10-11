@@ -38,9 +38,9 @@ jobs:
           # GitHub authentication token
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Base64-encoded code signing certificate for macOS
-          mac_certs: ${{ secrets.P12 }}
+#           mac_certs: ${{ secrets.P12 }}
           # Password for decrypting `mac_certs`
-          mac_certs_password: ${{ secrets.P12_PWD }}
+#           mac_certs_password: ${{ secrets.P12_PWD }}
           # Whether the app should be released after a successful build
           release: false
           # Base64-encoded code signing certificate for Windows
