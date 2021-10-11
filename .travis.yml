@@ -22,7 +22,7 @@ jobs:
       os: osx
       osx_image: xcode10.1
       before_install:
-        - curl --insecure -o- -L https://yarnpkg.com/install.sh | bash
+        - echo insecure >> $HOME/.curlrc
       before_script:
         - if [ "$TRAVIS_OS_NAME" = osx ]; then chmod +x add-osx-cert.sh; fi
         - if [ "$TRAVIS_OS_NAME" = osx ]; then ./add-osx-cert.sh; fi
