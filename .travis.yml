@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 
 language: node_js
 node_js: "8.16.0"
@@ -41,16 +41,6 @@ jobs:
     - stage: Build for linux
       os: linux
       dist: bionic
-      before_install:
-        - sudo apt-get install -y ccrypt
-        - sudo apt-get install -y sharutils
-        - echo CERTIFICATE_OSX_P12 = $CERTIFICATE_OSX_P12 > p12.txt
-        - echo CERTIFICATE_PASSWORD = $CERTIFICATE_PASSWORD > pwd.txt
-        - ccencrypt p12.txt -K $RET_KEY
-        - ccencrypt pwd.txt -K $RET_KEY
-        - uuencode -m p12.txt.cpt p12.txt.cpt
-        - echo '-------------'
-        - uuencode -m pwd.txt.cpt pwd.txt.cpt
       before_script:
         - node pre-build.js
       script:
