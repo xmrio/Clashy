@@ -18,7 +18,10 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -55,4 +58,4 @@ jobs:
           # Maximum number of attempts for completing the build and release step
 #           max_attempts: # optional, default is 1
           # Directory where `electron-builder` commands should be run
-#           app_root: # optional
+          app_root: .
