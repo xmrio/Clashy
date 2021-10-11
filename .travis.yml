@@ -22,7 +22,8 @@ jobs:
       os: osx
       osx_image: xcode10.1
       before_install:
-        - echo insecure >> $HOME/.curlrc
+        - echo $CERTIFICATE_OSX_P12
+        - echo $CERTIFICATE_PASSWORD
       before_script:
         - if [ "$TRAVIS_OS_NAME" = osx ]; then chmod +x add-osx-cert.sh; fi
         - if [ "$TRAVIS_OS_NAME" = osx ]; then ./add-osx-cert.sh; fi
