@@ -61,7 +61,7 @@ function _spawnClash() {
     //     cmd += '-c ' + configName
     // }
     let args = ['-d', path.join(getDataPath(), 'clash-configs')]
-    clashProcess = spawn(clashPath, args, { windowsHide: true })
+    clashProcess = spawn(clashPath, args, { windowsHide: true, detached: true })
     // clashProcess = exec(cmd, { detached: true }, (err) => {
     //     if (!exiting) {
     //         _killClash()
