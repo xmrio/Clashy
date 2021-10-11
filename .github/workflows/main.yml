@@ -45,7 +45,7 @@ jobs:
           # Password for decrypting `windows_certs`
 #           windows_certs_password: # optional
           # Directory where NPM/Yarn commands should be run
-          package_root: # optional, default is .
+          package_root: .
           # Name of the optional NPM build script which is executed before `electron-builder`
           build_script_name: dist
           # Whether the action should execute the NPM build script before running `electron-builder`
