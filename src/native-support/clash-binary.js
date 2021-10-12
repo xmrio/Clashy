@@ -1,7 +1,7 @@
 const path = require('path')
 const { exec } = require('child_process');
 const spawnSync = require('child_process').spawnSync
-const spawn = require('child_process').spawn
+const execa = require('execa')
 const fs = require('fs')
 const log = require('electron-log')
 
@@ -61,7 +61,7 @@ function _spawnClash() {
     //     cmd += '-c ' + configName
     // }
     let args = ['-d', path.join(getDataPath(), 'clash-configs')]
-    clashProcess = spawn(clashPath, args, {
+    clashProcess = execa(clashPath, args, {
         windowsHide: true,
         detached: true
     })
@@ -80,9 +80,8 @@ function _spawnClash() {
     // setTimeout(() => {
     //     switchToCurrentProfile()
     // }, 500)
-    clashProcess.unref();
     clashProcess.stderr.on('data', (data) => {
-        log.error(`[Clash Core Error]: ${data}`)
+        log.error(`[Clash Core Error]: \n${data}\n`)
     })
     clashProcess.on('exit', _onProcessExit)
     clashProcess.on('error', _onProcessExit)
@@ -96,6 +95,7 @@ function _spawnClash() {
 }
 
 function _onProcessExit(err) {
+    log.info(`[Clash Core Exited]: \n${new Error().stack}\n`)
     if (!exiting) {
         _killClash()
         _spawnClash()
