@@ -35,7 +35,7 @@ async function switchToCurrentProfile() {
     })
     const body = {
         name: currentProxy,
-        'log-level': 'debug'
+        'log-level': 'warning'
     }
     return await fetchHttp(`${BASE_URL}/proxies/${currentSelector}`, 'PUT', body)
 
