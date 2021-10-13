@@ -57,15 +57,7 @@ function _spawnClash() {
         }
     }
     // let cmd = clashPath + ' -d ' + path.join(getDataPath(true), 'clash-configs')
-    // if (configName != null && configName.length !== 0) {
-    //     cmd += '-c ' + configName
-    // }
-    let args = ['-d', path.join(getDataPath(), 'clash-configs')]
-    clashProcess = execa(clashPath, args, {
-        windowsHide: true,
-        detached: true
-    })
-    // clashProcess = exec(cmd, { detached: true }, (err) => {
+    // clashProcess = exec(cmd, { detached: true, maxBuffer:  }, (err) => {
     //     if (!exiting) {
     //         _killClash()
     //         _spawnClash()
@@ -77,15 +69,21 @@ function _spawnClash() {
     //         )
     //     }
     // })
-    // setTimeout(() => {
-    //     switchToCurrentProfile()
-    // }, 500)
+    let args = ['-d', path.join(getDataPath(), 'clash-configs')]
+    clashProcess = execa(clashPath, args, {
+        windowsHide: true,
+        detached: true
+    })
+
+    clashProcess.stdout.on('data', (data) => {
+        log.log(`[Clash Core Log]: \n${data}\n`)
+    })
     clashProcess.stderr.on('data', (data) => {
         log.error(`[Clash Core Error]: \n${data}\n`)
     })
-    clashProcess.on('exit', _onProcessExit)
-    clashProcess.on('error', _onProcessExit)
-    clashProcess.on('close', _onProcessExit)
+    clashProcess.on('exit', _onProcessExit('exit'))
+    clashProcess.on('error', _onProcessExit('error'))
+    clashProcess.on('close', _onProcessExit('close'))
 
     setTimeout(() => {
         switchToCurrentProfile()
@@ -94,20 +92,22 @@ function _spawnClash() {
     exiting = false
 }
 
-function _onProcessExit(err) {
-    log.info(`[Clash Core Exited]: \n${new Error().stack}\n`)
-    if (!exiting) {
-        _killClash()
-        _spawnClash()
-        if (typeof err === 'object') {
-            log.error(
-                `Clash process exit with signal: ${err ? err.signal : 'null'}. \n
-                Code: ${err ? err.code : 'null'}; \n
-                Stack: ${err ? err.stack : 'null'}. \n
-                --------------------------------------`
-            )
-        } else {
-            log.error(`Clash process exit with code: ${err}`)
+const _onProcessExit = (event) => {
+    return (err) => {
+        log.info(`[Clash Core Exited]: \nEvent:${event}\n \n${new Error().stack}\n`)
+        if (!exiting) {
+            _killClash()
+            _spawnClash()
+            if (typeof err === 'object') {
+                log.error(
+                    `Clash process exit with signal: ${err ? err.signal : 'null'}. \n
+                    Code: ${err ? err.code : 'null'}; \n
+                    Stack: ${err ? err.stack : 'null'}. \n
+                    --------------------------------------`
+                )
+            } else {
+                log.error(`Clash process exit with code: ${err}`)
+            }
         }
     }
 }
