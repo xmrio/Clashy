@@ -6,7 +6,8 @@ const fs = require('fs')
 const log = require('electron-log')
 
 const { isElectronDebug, getDataPath, isWindows, isLinux } = require('./utils')
-const { switchToCurrentProfile } = require('./profiles-manager')
+const { switchToCurrentProfile } = require('./profiles-manager');
+const { Stream } = require('stream');
 
 var clashProcess = undefined
 var exiting = false
@@ -70,20 +71,27 @@ function _spawnClash() {
     //     }
     // })
     let args = ['-d', path.join(getDataPath(), 'clash-configs')]
+    const out = new Stream.Writable({
+        write: (chunk, _, next) => {
+            log.log(`${chunk}\n`)
+            next()
+        }
+    })
+    const err = new Stream.Writable({
+        write: (chunk, _, next) => {
+            log.error(`[Clash Core Error]:\n${chunk}\n`)
+            next()
+        }
+    })
     clashProcess = execa(clashPath, args, {
         windowsHide: true,
-        detached: true
+        detached: true,
+        stdio: ['ignore', out, err]
     })
+    clashProcess.unref()
 
-    clashProcess.stdout.on('data', (data) => {
-        log.log(`[Clash Core Log]: \n${data}\n`)
-    })
-    clashProcess.stderr.on('data', (data) => {
-        log.error(`[Clash Core Error]: \n${data}\n`)
-    })
     clashProcess.on('exit', _onProcessExit('exit'))
     clashProcess.on('error', _onProcessExit('error'))
-    clashProcess.on('close', _onProcessExit('close'))
 
     setTimeout(() => {
         switchToCurrentProfile()
