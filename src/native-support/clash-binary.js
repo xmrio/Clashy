@@ -125,8 +125,6 @@ function _killClash() {
     if (clashProcess) {
         if (isWindows()) {
             spawnSync("taskkill", ["/pid", clashProcess.pid, '/f', '/t'])
-        } else if(isLinux()) {
-            exec(`kill $(ps -o pid= --ppid ${clashProcess.pid})`)
         } else if (clashProcess.kill) {
             clashProcess.kill('SIGINT')
         } else if (clashProcess.pid) {
