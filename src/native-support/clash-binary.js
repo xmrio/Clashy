@@ -86,8 +86,10 @@ function _spawnClash() {
     clashProcess = execa(clashPath, args, {
         windowsHide: true,
         detached: true,
-        stdio: ['ignore', out, err]
+        stdio: ['ignore']
     })
+    clashProcess.stdout.pipe(out)
+    clashProcess.stderr.pipe(err)
     clashProcess.unref()
 
     clashProcess.on('exit', _onProcessExit('exit'))
