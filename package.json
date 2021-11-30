@@ -1,6 +1,6 @@
 {
   "name": "Clashy",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": {
     "name": "nobody",
     "email": "nobody@nowhere.com"
@@ -18,7 +18,8 @@
     "pack": "npm run build:all && electron-builder --dir",
     "dist": "npm run build:all && electron-builder",
     "publish": "electron-builder -p",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "ci": "npm run dist && electron-builder -p always"
   },
   "main": "main.js",
   "homepage": ".",
@@ -58,6 +59,7 @@
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-react": "7.12.4",
     "eslint-plugin-react-hooks": "^1.5.0",
+    "execa": "^5.1.1",
     "file-loader": "3.0.1",
     "fs-extra": "7.0.1",
     "html-webpack-plugin": "4.0.0-beta.5",
@@ -164,7 +166,10 @@
     "linux": {
       "category": "Network",
       "icon": "build-resources/1024x1024.png",
-      "target": ["AppImage", "deb"]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     },
     "nsis": {
       "runAfterFinish": true,

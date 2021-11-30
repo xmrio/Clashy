@@ -1,11 +1,13 @@
 const path = require('path')
 const { exec } = require('child_process');
-const spawn = require('child_process').spawnSync
+const spawnSync = require('child_process').spawnSync
+const execa = require('execa')
 const fs = require('fs')
 const log = require('electron-log')
 
 const { isElectronDebug, getDataPath, isWindows, isLinux } = require('./utils')
 const { switchToCurrentProfile } = require('./profiles-manager');
+const { Stream } = require('stream');
 
 var clashProcess = undefined
 var exiting = false
@@ -43,7 +45,7 @@ function _getClashBinaryPath() {
     return ret
 }
 
-function _spawnClash(configName) {
+function _spawnClash() {
     if (clashProcess != null && !clashProcess.killed) {
         return
     }
@@ -55,38 +57,80 @@ function _spawnClash(configName) {
             fs.chmodSync(clashPath, 0o755)
         }
     }
-    let cmd = clashPath + ' -d ' + path.join(getDataPath(true), 'clash-configs')
-    if (configName != null && configName.length !== 0) {
-        cmd += '-c ' + configName
-    }
-    if (isElectronDebug()) {
-        console.log('Spawn cmd = ' + cmd)
-    }
-    clashProcess = exec(cmd, { detached: true }, (err) => {
-        if (!exiting) {
-            _killClash()
-            _spawnClash()
-            log.error(`Clash process exit with signal: ${err ? err.signal : 'null'}. \n
-Code: ${err ? err.code : 'null'}; \n
-Stack: ${err ? err.stack : 'null'}. \n
---------------------------------------`)
+    // let cmd = clashPath + ' -d ' + path.join(getDataPath(true), 'clash-configs')
+    // clashProcess = exec(cmd, { detached: true, maxBuffer:  }, (err) => {
+    //     if (!exiting) {
+    //         _killClash()
+    //         _spawnClash()
+    //         log.error(
+    //             `Clash process exit with signal: ${err ? err.signal : 'null'}. \n
+    //             Code: ${err ? err.code : 'null'}; \n
+    //             Stack: ${err ? err.stack : 'null'}. \n
+    //             --------------------------------------`
+    //         )
+    //     }
+    // })
+    let args = ['-d', path.join(getDataPath(), 'clash-configs')]
+    const out = new Stream.Writable({
+        write: (chunk, _, next) => {
+            log.log(`${chunk}\n`)
+            next()
         }
     })
+    const err = new Stream.Writable({
+        write: (chunk, _, next) => {
+            log.error(`[Clash Core Error]:\n${chunk}\n`)
+            next()
+        }
+    })
+    clashProcess = execa(clashPath, args, {
+        windowsHide: true,
+        detached: true,
+        stdio: ['ignore']
+    })
+    clashProcess.stdout.pipe(out)
+    clashProcess.stderr.pipe(err)
+    clashProcess.unref()
+
+    clashProcess.on('exit', _onProcessExit('exit'))
+    clashProcess.on('error', _onProcessExit('error'))
+
     setTimeout(() => {
         switchToCurrentProfile()
     }, 500)
+
     exiting = false
+}
+
+const _onProcessExit = (event) => {
+    return (err) => {
+        log.info(`[Clash Core Exited]: \nEvent:${event}\n \n${new Error().stack}\n`)
+        if (!exiting) {
+            _killClash()
+            _spawnClash()
+            if (typeof err === 'object') {
+                log.error(
+                    `Clash process exit with signal: ${err ? err.signal : 'null'}. \n
+                    Code: ${err ? err.code : 'null'}; \n
+                    Stack: ${err ? err.stack : 'null'}. \n
+                    --------------------------------------`
+                )
+            } else {
+                log.error(`Clash process exit with code: ${err}`)
+            }
+        }
+    }
 }
 
 function _killClash() {
     exiting = true
-    if (clashProcess && clashProcess.kill) {
+    if (clashProcess) {
         if (isWindows()) {
-            spawn("taskkill", ["/pid", clashProcess.pid, '/f', '/t'])
-        } else if(isLinux()) {
-            exec(`kill $(ps -o pid= --ppid ${clashProcess.pid})`)
-        } else {
+            spawnSync("taskkill", ["/pid", clashProcess.pid, '/f', '/t'])
+        } else if (clashProcess.kill) {
             clashProcess.kill('SIGINT')
+        } else if (clashProcess.pid) {
+            process.kill(clashProcess.pid, 'SIGINT')
         }
         clashProcess = null
     }
