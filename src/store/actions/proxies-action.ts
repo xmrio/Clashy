@@ -7,6 +7,7 @@ export enum ProxiesAction {
     switchProxy = 'PROXIES_SWITCH_PROXY',
     checkProxyDelay = 'PROXIES_CHECK_PROXY_DELAY',
     gotProxyDelay = 'PROXIES_GOT_PROXY_DELAY',
+    checkDelayBySelector = 'PROXIES_CHECK_DELAY_BY_SELECTOR',
     // checkingDelay = 'PROXIES_CHECKING_DELAY',
     delayChecked = 'PROXIES_DELAY_CHECKED'
 }
@@ -62,6 +63,13 @@ export function gotProxyDelay(delaies: {[key: string]: number}): TProxiesAction 
     return {
         type: ProxiesAction.gotProxyDelay,
         delaies
+    }
+}
+
+export function checkDelayBySelector(selector: string): TProxiesAction {
+    return {
+        type: ProxiesAction.checkDelayBySelector,
+        selector
     }
 }
 
