@@ -38,6 +38,7 @@ export function proxies(state: ProxiesState = initialState, action: TProxiesActi
         case ProxiesAction.gotError:
             return state.set('error', action.error)
         case ProxiesAction.checkProxyDelay:
+        case ProxiesAction.checkDelayBySelector:
             return state.set('testingSpeed', true)
         case ProxiesAction.gotProxyDelay:
             return populateDelaies(action, state)
