@@ -8,7 +8,7 @@ interface _ProxiesState {
     proxies: {[key: string]: Selector}
     delaies: Map<string, number>
     testingSpeed: boolean
-    currentSelector: string
+    currentSelector: string[]
     error?: any
 }
 
@@ -18,7 +18,7 @@ const initialStateFactory = Record<_ProxiesState>({
     proxies: {},
     delaies: Map(),
     testingSpeed: false,
-    currentSelector: '',
+    currentSelector: [],
     error: null
 })
 
@@ -51,21 +51,20 @@ export function proxies(state: ProxiesState = initialState, action: TProxiesActi
 
 function filterSelectors(proxies?: Proxies) {
     if (proxies == null) {
-        return { proxies: {}, selector: '', proxy: '' }
+        return { proxies: {}, selector: [], proxy: '' }
     }
     const keys = Object.keys(proxies)
     const validKeys = keys.filter(each => {
         return proxies[each].type === 'Selector' && NON_SELECTOR_KEYS.indexOf(each.toUpperCase()) < 0
     })
-    let selector = ''
+    const selector: string[] = []
     const ret: {[key: string]: Selector} = {}
-    validKeys.map(each => {
+    validKeys.forEach(each => {
         const value = proxies[each]
         ret[each] = value
         if (value.now != null && value.now.length !== 0) {
-            selector = each
+            selector.push(each)
         }
-        return each
     })
     return {
         proxies: ret,
