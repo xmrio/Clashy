@@ -60,6 +60,22 @@ export function *watchCheckProxyDelay() {
     }
 }
 
+export function *watchCheckSelectorDelay() {
+    while (true) {
+        const action = yield take(ProxiesAction.checkDelayBySelector)
+        const { selector } = action
+        const selectors = store.getState().proxies.get('proxies', {})
+        const proxies = selectors[selector].all || []
+        const group = proxies.length / 10 + 1
+        for (let i = 0; i < group; i ++) {
+            yield call(groupCheckDelay, proxies.slice(i * 10, (i + 1) * 10))
+        }
+        yield put({
+            type: ProxiesAction.delayChecked
+        })
+    }
+}
+
 function *groupCheckDelay(proxies: string[]) {
     try {
         const delaies: TProxyDelay[] = yield call(callIPC, BRG_MSG_CHECK_DELAY, {
@@ -67,7 +83,7 @@ function *groupCheckDelay(proxies: string[]) {
         })
         const map: {[key: string]: number} = {}
         proxies.map((each, idx) => {
-            map[each] = delaies[idx].delay || 0
+            map[each] = delaies[idx].delay || Number.MAX_SAFE_INTEGER
         })
         yield put(gotProxyDelay(map))
     } catch (e) {

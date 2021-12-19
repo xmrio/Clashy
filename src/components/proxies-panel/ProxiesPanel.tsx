@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, MouseEventHandler } from 'react'
 import { connect } from 'react-redux'
-import { Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Fab, Checkbox, Snackbar } from '@material-ui/core'
+import { Map } from 'immutable'
+import { Card, CardContent, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Fab, Checkbox, Snackbar, Button } from '@material-ui/core'
 
 import './ProxiesPanel.css'
-import { fetchProxies, switchProxy, checkProxiesDelay } from '../../store/actions'
+import { fetchProxies, switchProxy, checkProxiesDelay, checkDelayBySelector } from '../../store/actions'
 import { Proxies } from '../../apis'
 import { RootState } from '../../store/reducers'
 import { TDispatch } from '../../utils'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { NetworkCheck, ArrowForward } from '@material-ui/icons'
+import { NetworkCheck, ArrowForward, OfflineBoltOutlined, SortOutlined, Check } from '@material-ui/icons'
 
 interface Props {
     proxies: Proxies
@@ -79,14 +80,45 @@ interface CardsProps {
     proxies: string[],
     selected: string,
     onClickProxy: (selector: string, proxy: string) => void,
+    delay?: Map<string, number>
+    testingSpeed?: boolean
+    checkSelectorDelay?: (selector: string) => void
 }
 
-const ProxyCards = ({ name, proxies, selected, onClickProxy }: CardsProps) => {
+const EMPTY_DELAY = {}
+
+const _ProxyCards = ({ name, proxies, selected, onClickProxy, delay, checkSelectorDelay, testingSpeed }: CardsProps) => {
     const rowCount = proxies.length / 3 || 1
-    const rows = []
-    for (let i = 0; i < rowCount; i ++) {
-        rows.push(proxies.slice(3 * i, 3 * (i + 1)))
-    }
+
+    const [sort, setSort] = useState(false);
+    const onClickSort: MouseEventHandler = useMemo(() => (e) => {
+        e.stopPropagation()
+        setSort(!sort)
+    }, [sort])
+
+    const onClickCheckSelector: MouseEventHandler = useMemo(() => (e) => {
+        e.stopPropagation()
+        if (testingSpeed) {
+            return
+        }
+        checkSelectorDelay && checkSelectorDelay(name)
+    }, [name, checkSelectorDelay, testingSpeed])
+
+    const rows = useMemo(() => {
+        let proxyArray = proxies;
+        if (sort && delay) {
+            proxyArray = [...proxies].sort((a, b) => {
+                const left = delay.get(a) || 0
+                const right = delay.get(b) || 0
+                return left - right
+            })
+        }
+        const ret = [];
+        for (let i = 0; i < rowCount; i ++) {
+            ret.push(proxyArray.slice(3 * i, 3 * (i + 1)))
+        }
+        return ret
+    }, [proxies, sort, delay])
 
     return (
         <ExpansionPanel className='ProxyCards' TransitionProps={{ unmountOnExit: true }} square={true} >
@@ -99,6 +131,13 @@ const ProxyCards = ({ name, proxies, selected, onClickProxy }: CardsProps) => {
                         [<ArrowForward key='header-icon' style={{ fontSize: '20px', height: '18px' }} color='secondary' />, <p key='header-selected'> {selected}</p>]
                         : null}
                 </div>
+                <Button style={{ alignSelf: 'flex-end' }} onClick={onClickCheckSelector}>
+                    <OfflineBoltOutlined color="primary" />
+                </Button>
+                <Button style={{ alignSelf: 'flex-end' }} onClick={onClickSort}>
+                    <SortOutlined color="primary" />
+                    { sort ? <Check color="secondary" style={{ position: 'absolute', width: 20, height: 20, bottom: 0, right: 0 }} /> : null }
+                </Button>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
                 <div style={{ width: '100%', flex: 1, textAlign: 'center', overflowY: 'auto', marginTop: '10px' }}>
@@ -121,6 +160,16 @@ const ProxyCards = ({ name, proxies, selected, onClickProxy }: CardsProps) => {
     )
 }
 
+const ProxyCards = connect(
+    (state: RootState, props: CardsProps) => ({
+        delay: state.proxies.get('delaies') || EMPTY_DELAY,
+        testingSpeed: state.proxies.get('testingSpeed')
+    }),
+    (dispatch: TDispatch) => ({
+        checkSelectorDelay: (selector: string) => dispatch(checkDelayBySelector(selector))
+    })
+)(_ProxyCards)
+
 interface ClickableProps {
     proxy: string,
     selected: string,
@@ -133,7 +182,7 @@ const _ClickableCards = ({ proxy, selected, selector, delay = -1, onClick }: Cli
     const onClickProxy = () => {
         onClick(selector, proxy)
     }
-    const color = delay === 0 ? '#FD536F' : delay < 200 ? '#C3E88D' : '#C59E57'
+    const color = delay === Number.MAX_SAFE_INTEGER ? '#FD536F' : delay < 200 ? '#C3E88D' : '#C59E57'
     return (
         <Card
             square={true}
@@ -152,7 +201,7 @@ const _ClickableCards = ({ proxy, selected, selector, delay = -1, onClick }: Cli
                     <p style={{
                         color
                     }} className='ProxyDelay'>
-                        {delay === -1 ? '' : delay === 0 ? 'Timeout' : `${delay}ms`}
+                        {delay === -1 ? '' : delay === Number.MAX_SAFE_INTEGER ? 'Timeout' : `${delay}ms`}
                     </p>
                 </div>
             </CardContent>
