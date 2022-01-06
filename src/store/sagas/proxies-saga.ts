@@ -46,13 +46,29 @@ export function *watchCheckProxyDelay() {
         yield take(ProxiesAction.checkProxyDelay)
         const selectors = store.getState().proxies.get('proxies', {})
         const currentSelector = store.getState().proxies.get('currentSelector')
-        const selector = selectors[currentSelector]
-        const proxies = selector.all || []
-        if (proxies != null) {
-            const group = proxies.length / 10 + 1
-            for (let i = 0; i < group; i ++) {
-                yield call(groupCheckDelay, proxies.slice(i * 10, (i + 1) * 10))
-            }
+        let proxies: string[] = []
+        currentSelector.forEach((e) => {
+            proxies = proxies.concat(selectors[e].all || [])
+        })
+        const group = proxies.length / 10 + 1
+        for (let i = 0; i < group; i ++) {
+            yield call(groupCheckDelay, proxies.slice(i * 10, (i + 1) * 10))
+        }
+        yield put({
+            type: ProxiesAction.delayChecked
+        })
+    }
+}
+
+export function *watchCheckSelectorDelay() {
+    while (true) {
+        const action = yield take(ProxiesAction.checkDelayBySelector)
+        const { selector } = action
+        const selectors = store.getState().proxies.get('proxies', {})
+        const proxies = selectors[selector].all || []
+        const group = proxies.length / 10 + 1
+        for (let i = 0; i < group; i ++) {
+            yield call(groupCheckDelay, proxies.slice(i * 10, (i + 1) * 10))
         }
         yield put({
             type: ProxiesAction.delayChecked
@@ -67,7 +83,7 @@ function *groupCheckDelay(proxies: string[]) {
         })
         const map: {[key: string]: number} = {}
         proxies.map((each, idx) => {
-            map[each] = delaies[idx].delay || 0
+            map[each] = delaies[idx].delay || Number.MAX_SAFE_INTEGER
         })
         yield put(gotProxyDelay(map))
     } catch (e) {
